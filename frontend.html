@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>订阅转换前端</title>
-    <!-- 引入 Element UI 样式 -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <style>
         body {
@@ -34,10 +33,6 @@
         .el-input, .el-textarea {
             width: 100%;
         }
-        .el-checkbox {
-            display: block; /* 每个选项独占一行 */
-            margin-bottom: 10px; /* 选项之间增加间距 */
-        }
         .generate-btn {
             width: 100%;
             margin-top: 20px;
@@ -54,14 +49,12 @@
         .copy-btn {
             margin-top: 10px;
         }
-        /* .footer 已移除 */
     </style>
 </head>
 <body>
     <div id="app">
         <h1 style="text-align: center; margin-bottom: 30px;">订阅转换前端</h1>
 
-        <!-- 订阅链接输入框 -->
         <div class="form-section">
             <div class="section-title">1. 订阅链接</div>
             <el-input
@@ -70,7 +63,6 @@
             </el-input>
         </div>
 
-        <!-- 远程配置 -->
         <div class="form-section">
             <div class="section-title">2. 远程配置</div>
             <el-input
@@ -80,11 +72,8 @@
             </el-input>
         </div>
 
-
-        <!-- 生成订阅链接 -->
         <el-button type="primary" class="generate-btn" @click="generateLink" :loading="loading">生成订阅链接</el-button>
 
-        <!-- 结果展示区域 -->
         <div class="result-section" v-if="generatedUrl">
             <div class="result-title">生成的订阅链接:</div>
             <el-input v-model="generatedUrl" :readonly="true"></el-input>
@@ -93,9 +82,8 @@
             </div>
         </div>
 
-    </div> <!-- #app 的闭合标签 -->
+    </div>
 
-    <!-- 引入 Vue.js 和 Element UI -->
     <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script>
@@ -103,20 +91,13 @@
             el: '#app',
             data: {
                 loading: false,
-                // Worker 的基础 URL，会在 Worker 获取前端时被替换
-                workerBaseUrl: 'https://bulianglin2023.dev', // Placeholder, will be replaced by Worker
+                workerBaseUrl: '',
                 form: {
                     sourceSubUrl: '',
                     remoteConfig: '',
-                    // 默认值根据你的要求设置
-                    emoji: false,      // 默认关闭
-                    list: false,       // 默认关闭
-                    sort: false,       // 默认关闭
-                    fdn: false,        // 默认关闭
-                    tfo: false         // 默认关闭
-                    // 移除了 scv, expand, new_name
                 },
-                generatedUrl: ''
+                generatedUrl: '',
+                defaultConfig: 'https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/refs/heads/master/Clash/config/ACL4SSR_Online_Full.ini'
             },
             methods: {
                 async generateLink() {
@@ -129,24 +110,12 @@
                     this.generatedUrl = '';
 
                     try {
-                        // 修改点1: 更改路径和基础参数
-                        let url = new URL('/sub', this.workerBaseUrl);
-                        url.searchParams.set('target', 'clash'); // 固定 target 为 clash
-                        url.searchParams.set('url', this.form.sourceSubUrl); // 设置动态 url
+                        let url = new URL('/sub', window.location.origin);
+                        url.searchParams.set('target', 'clash');
+                        url.searchParams.set('url', this.form.sourceSubUrl);
 
-                        // 远程配置 (如果提供)
-                        if (this.form.remoteConfig.trim()) {
-                            url.searchParams.set('config', this.form.remoteConfig.trim());
-                        }
-
-                        // 可选参数 - 仅添加值为 true 的参数
-                        // 修改点2: 确保参数名与 Worker 和后端服务兼容
-                        if (this.form.emoji) url.searchParams.set('emoji', 'true');
-                        if (this.form.list) url.searchParams.set('list', 'true');
-                        if (this.form.sort) url.searchParams.set('sort', 'true');
-                        if (this.form.fdn) url.searchParams.set('fdn', 'true');
-                        if (this.form.tfo) url.searchParams.set('tfo', 'true');
-                        // 移除了 scv, expand, new_name 的处理
+                        const configValue = this.form.remoteConfig.trim() || this.defaultConfig;
+                        url.searchParams.set('config', configValue);
 
                         this.generatedUrl = url.toString();
                         this.$message.success('订阅链接已生成');
@@ -169,7 +138,6 @@
                 }
             },
             mounted() {
-                // 获取当前页面的 Origin 作为 Worker 的 Base URL
                 this.workerBaseUrl = window.location.origin;
             }
         });
