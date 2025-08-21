@@ -61,7 +61,7 @@
     <div id="app">
         <h1 style="text-align: center; margin-bottom: 30px;">订阅转换前端</h1>
 
-        <!-- 1. 订阅链接输入框 -->
+        <!-- 订阅链接输入框 -->
         <div class="form-section">
             <div class="section-title">1. 订阅链接</div>
             <el-input
@@ -70,7 +70,7 @@
             </el-input>
         </div>
 
-        <!-- 2. 远程配置 -->
+        <!-- 远程配置 -->
         <div class="form-section">
             <div class="section-title">2. 远程配置</div>
             <el-input
@@ -80,17 +80,8 @@
             </el-input>
         </div>
 
-        <!-- 3. 更多选项 (精简版) -->
-        <div class="form-section">
-            <div class="section-title">3. 更多选项</div>
-            <el-checkbox v-model="form.emoji" label="添加 Emoji"></el-checkbox>
-            <el-checkbox v-model="form.list" label="仅输出节点列表"></el-checkbox>
-            <el-checkbox v-model="form.sort" label="对节点排序"></el-checkbox>
-            <el-checkbox v-model="form.fdn" label="过滤不规范节点"></el-checkbox>
-            <el-checkbox v-model="form.tfo" label="启用 TFO"></el-checkbox>
-        </div>
 
-        <!-- 4. 生成订阅链接 -->
+        <!-- 生成订阅链接 -->
         <el-button type="primary" class="generate-btn" @click="generateLink" :loading="loading">生成订阅链接</el-button>
 
         <!-- 结果展示区域 -->
