@@ -54,16 +54,7 @@
         .copy-btn {
             margin-top: 10px;
         }
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 12px;
-            color: #999;
-        }
-        .footer a {
-            color: #409EFF;
-            text-decoration: none;
-        }
+        /* .footer 已移除 */
     </style>
 </head>
 <body>
@@ -106,10 +97,12 @@
         <div class="result-section" v-if="generatedUrl">
             <div class="result-title">生成的订阅链接:</div>
             <el-input v-model="generatedUrl" :readonly="true"></el-input>
-            <el-button type="success" class="copy-btn" @click="copyToClipboard(generatedUrl)" icon="el-icon-document-copy">复制链接</el-button>
+            <div style="text-align: center; margin-top: 10px;">
+                <el-button type="success" class="copy-btn" @click="copyToClipboard(generatedUrl)" icon="el-icon-document-copy">复制链接</el-button>
+            </div>
         </div>
 
-
+    </div> <!-- #app 的闭合标签 -->
 
     <!-- 引入 Vue.js 和 Element UI -->
     <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
@@ -145,11 +138,10 @@
                     this.generatedUrl = '';
 
                     try {
-                        // 构建基础 URL 和参数
-                        let url = new URL('/subscription', this.workerBaseUrl); // 使用相对路径，Worker 会处理前缀
-
-                        // 必需参数
-                        url.searchParams.set('url', this.form.sourceSubUrl);
+                        // 修改点1: 更改路径和基础参数
+                        let url = new URL('/sub', this.workerBaseUrl);
+                        url.searchParams.set('target', 'clash'); // 固定 target 为 clash
+                        url.searchParams.set('url', this.form.sourceSubUrl); // 设置动态 url
 
                         // 远程配置 (如果提供)
                         if (this.form.remoteConfig.trim()) {
@@ -157,6 +149,7 @@
                         }
 
                         // 可选参数 - 仅添加值为 true 的参数
+                        // 修改点2: 确保参数名与 Worker 和后端服务兼容
                         if (this.form.emoji) url.searchParams.set('emoji', 'true');
                         if (this.form.list) url.searchParams.set('list', 'true');
                         if (this.form.sort) url.searchParams.set('sort', 'true');
