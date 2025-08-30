@@ -1,159 +1,101 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
+  
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>订阅转换前端</title>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', Arial, sans-serif;
-            background-color: #f5f5f5;
-            padding: 20px;
-            color: #333;
-        }
-        #app {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-        }
-        .form-section {
-            margin-bottom: 25px;
-        }
-        .section-title {
-            font-weight: bold;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ebeef5;
-            color: #409EFF;
-        }
-        .el-input, .el-textarea {
-            width: 100%;
-        }
-        .generate-btn {
-            width: 100%;
-            margin-top: 20px;
-        }
-        .result-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ebeef5;
-        }
-        .result-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .copy-btn {
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
+    <style>body { font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', Arial, sans-serif; background-color: #f5f5f5; padding: 20px; color: #333; } #app { max-width: 800px; margin: 0 auto; background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); } .form-section { margin-bottom: 25px; } .section-title { font-weight: bold; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #ebeef5; color: #409EFF; } .el-input, .el-textarea { width: 100%; } .generate-btn { width: 100%; margin-top: 20px; } .result-section { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ebeef5; } .result-title { font-weight: bold; margin-bottom: 10px; } .copy-btn { margin-top: 10px; }</style></head>
+  
+  <body>
     <div id="app">
-        <h1 style="text-align: center; margin-bottom: 30px;">订阅转换前端</h1>
-
-        <div class="form-section">
-            <div class="section-title">1. 订阅链接</div>
-            <el-input
-                placeholder="请输入您的原始订阅链接"
-                v-model="form.sourceSubUrl">
-            </el-input>
+      <h1 style="text-align: center; margin-bottom: 30px;">订阅转换前端</h1>
+      <div class="form-section">
+        <div class="section-title">1. 订阅链接</div>
+        <el-input placeholder="请输入您的原始订阅链接" v-model="form.sourceSubUrl"></el-input>
+      </div>
+      <div class="form-section">
+        <div class="section-title">2. 远程配置</div>
+        <el-input placeholder="请输入远程配置文件的 URL" v-model="form.remoteConfig" clearable></el-input>
+      </div>
+      <div class="form-section">
+        <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>3. 是否展开规则</span>
+          <el-radio-group v-model="form.expand" size="small">
+            <el-radio-button label="false" style="color:#409EFF;">不展开</el-radio-button>
+            <el-radio-button label="true" style="color:#409EFF;">展开</el-radio-button></el-radio-group>
         </div>
-
-        <div class="form-section">
-            <div class="section-title">2. 远程配置</div>
-            <el-input
-                placeholder="请输入远程配置文件的 URL"
-                v-model="form.remoteConfig"
-                clearable>
-            </el-input>
-        </div>
-
-        <div class="form-section">
-            <div class="section-title">3. 是否展开规则</div>
-            <el-switch
-                v-model="form.expand"
-                active-text="展开"
-                inactive-text="不展开">
-            </el-switch>
-        </div>
-
-        <el-button type="primary" class="generate-btn" @click="generateLink" :loading="loading">生成订阅链接</el-button>
-
-        <div class="result-section" v-if="generatedUrl">
-            <div class="result-title">生成的订阅链接:</div>
-            <el-input v-model="generatedUrl" :readonly="true"></el-input>
-            <div style="text-align: center; margin-top: 10px;">
-                <el-button type="success" class="copy-btn" @click="copyToClipboard(generatedUrl)" icon="el-icon-document-copy">复制链接</el-button>
-            </div>
-        </div>
-
+      </div>
+      <el-button type="primary" class="generate-btn" @click="generateLink" :loading="loading">生成订阅链接</el-button>
+      <div class="result-section" v-if="generatedUrl">
+        <div class="result-title">生成的订阅链接:</div>
+        <el-input v-model="generatedUrl" :readonly="true"></el-input>
+        <div style="text-align: center; margin-top: 10px;">
+          <el-button type="success" class="copy-btn" @click="copyToClipboard(generatedUrl)" icon="el-icon-document-copy">复制链接</el-button></div>
+      </div>
     </div>
-
     <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-    <script>
-        new Vue({
-            el: '#app',
-            data: {
-                loading: false,
-                workerBaseUrl: '',
-                form: {
-                    sourceSubUrl: '',
-                    remoteConfig: '',
-                    expand: false
-                },
-                generatedUrl: '',
-                defaultConfig: 'https://raw.githubusercontent.com/EternalExp/ACL4SSR/DIY/ACL4SSR_DIY.INI'
-            },
-            methods: {
-                async generateLink() {
-                    if (!this.form.sourceSubUrl.trim()) {
-                        this.$message.warning('请输入订阅链接');
-                        return;
-                    }
-
-                    this.loading = true;
-                    this.generatedUrl = '';
-
-                    try {
-                        let url = new URL('/sub', window.location.origin);
-                        url.searchParams.set('target', 'clash');
-                        url.searchParams.set('url', this.form.sourceSubUrl);
-
-                        const configValue = this.form.remoteConfig.trim() || this.defaultConfig;
-                        url.searchParams.set('config', configValue);
-
-                        // 新增 expand 参数
-                        url.searchParams.set('expand', this.form.expand ? 'true' : 'false');
-
-                        this.generatedUrl = url.toString();
-                        this.$message.success('订阅链接已生成');
-
-                    } catch (error) {
-                        console.error('生成链接时出错:', error);
-                        this.$message.error('生成链接失败: ' + (error.message || '未知错误'));
-                    } finally {
-                        this.loading = false;
-                    }
-                },
-                copyToClipboard(text) {
-                    if (!text) return;
-                    navigator.clipboard.writeText(text).then(() => {
-                        this.$message.success('链接已复制到剪贴板');
-                    }).catch(err => {
-                        console.error('复制失败:', err);
-                        this.$message.error('复制失败');
-                    });
-                }
-            },
-            mounted() {
-                this.workerBaseUrl = window.location.origin;
+    <script>new Vue({
+        el: '#app',
+        data: {
+          loading: false,
+          workerBaseUrl: '',
+          form: {
+            sourceSubUrl: '',
+            remoteConfig: '',
+            expand: 'false' // 默认不展开
+          },
+          generatedUrl: '',
+          defaultConfig: 'https://raw.githubusercontent.com/EternalExp/ACL4SSR/DIY/ACL4SSR_DIY.INI'
+        },
+        methods: {
+          async generateLink() {
+            if (!this.form.sourceSubUrl.trim()) {
+              this.$message.warning('请输入订阅链接');
+              return;
             }
-        });
-    </script>
-</body>
+
+            this.loading = true;
+            this.generatedUrl = '';
+
+            try {
+              let url = new URL('/sub', window.location.origin);
+              url.searchParams.set('target', 'clash');
+              url.searchParams.set('url', this.form.sourceSubUrl);
+
+              const configValue = this.form.remoteConfig.trim() || this.defaultConfig;
+              url.searchParams.set('config', configValue);
+
+              // 新增 expand 参数
+              url.searchParams.set('expand', this.form.expand);
+
+              this.generatedUrl = url.toString();
+              this.$message.success('订阅链接已生成');
+
+            } catch(error) {
+              console.error('生成链接时出错:', error);
+              this.$message.error('生成链接失败: ' + (error.message || '未知错误'));
+            } finally {
+              this.loading = false;
+            }
+          },
+          copyToClipboard(text) {
+            if (!text) return;
+            navigator.clipboard.writeText(text).then(() = >{
+              this.$message.success('链接已复制到剪贴板');
+            }).
+            catch(err = >{
+              console.error('复制失败:', err);
+              this.$message.error('复制失败');
+            });
+          }
+        },
+        mounted() {
+          this.workerBaseUrl = window.location.origin;
+        }
+      });</script>
+  </body>
+
 </html>
