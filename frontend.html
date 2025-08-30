@@ -72,6 +72,15 @@
             </el-input>
         </div>
 
+        <div class="form-section">
+            <div class="section-title">3. 是否展开规则</div>
+            <el-switch
+                v-model="form.expand"
+                active-text="展开"
+                inactive-text="不展开">
+            </el-switch>
+        </div>
+
         <el-button type="primary" class="generate-btn" @click="generateLink" :loading="loading">生成订阅链接</el-button>
 
         <div class="result-section" v-if="generatedUrl">
@@ -95,6 +104,7 @@
                 form: {
                     sourceSubUrl: '',
                     remoteConfig: '',
+                    expand: false
                 },
                 generatedUrl: '',
                 defaultConfig: 'https://raw.githubusercontent.com/EternalExp/ACL4SSR/DIY/ACL4SSR_DIY.INI'
@@ -116,6 +126,9 @@
 
                         const configValue = this.form.remoteConfig.trim() || this.defaultConfig;
                         url.searchParams.set('config', configValue);
+
+                        // 新增 expand 参数
+                        url.searchParams.set('expand', this.form.expand ? 'true' : 'false');
 
                         this.generatedUrl = url.toString();
                         this.$message.success('订阅链接已生成');
@@ -144,5 +157,3 @@
     </script>
 </body>
 </html>
-
-
