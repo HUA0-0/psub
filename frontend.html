@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>订阅转换前端</title>
+    <title>Subscription Converter</title>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <style>
         body {
-            font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', Arial, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background-color: #f5f5f5;
             padding: 20px;
             color: #333;
@@ -53,20 +53,20 @@
 </head>
 <body>
     <div id="app">
-        <h1 style="text-align: center; margin-bottom: 30px;">订阅转换前端</h1>
+        <h1 style="text-align: center; margin-bottom: 30px;">Subscription Converter</h1>
 
         <div class="form-section">
-            <div class="section-title">1. 订阅链接</div>
+            <div class="section-title">1. Subscription Link</div>
             <el-input
-                placeholder="请输入您的原始订阅链接"
+                placeholder="Enter your original subscription link"
                 v-model="form.sourceSubUrl">
             </el-input>
         </div>
 
         <div class="form-section">
-            <div class="section-title">2. 远程配置</div>
+            <div class="section-title">2. Remote Config</div>
             <el-input
-                placeholder="请输入远程配置文件的 URL"
+                placeholder="Enter the URL of the remote config file"
                 v-model="form.remoteConfig"
                 clearable>
             </el-input>
@@ -74,21 +74,21 @@
 
 <div class="form-section">
     <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
-        <span>3. 是否展开规则</span>
+        <span>3. Expand Rules</span>
         <el-radio-group v-model="form.expand" size="small">
-            <el-radio-button label="false" style="color:#409EFF;">不展开</el-radio-button>
-            <el-radio-button label="true" style="color:#409EFF;">展开</el-radio-button>
+            <el-radio-button label="false" style="color:#409EFF;">Do Not Expand</el-radio-button>
+            <el-radio-button label="true" style="color:#409EFF;">Expand</el-radio-button>
         </el-radio-group>
     </div>
 </div>
 
-        <el-button type="primary" class="generate-btn" @click="generateLink" :loading="loading">生成订阅链接</el-button>
+        <el-button type="primary" class="generate-btn" @click="generateLink" :loading="loading">Generate Subscription Link</el-button>
 
         <div class="result-section" v-if="generatedUrl">
-            <div class="result-title">生成的订阅链接:</div>
+            <div class="result-title">Generated Subscription Link:</div>
             <el-input v-model="generatedUrl" :readonly="true"></el-input>
             <div style="text-align: center; margin-top: 10px;">
-                <el-button type="success" class="copy-btn" @click="copyToClipboard(generatedUrl)" icon="el-icon-document-copy">复制链接</el-button>
+                <el-button type="success" class="copy-btn" @click="copyToClipboard(generatedUrl)" icon="el-icon-document-copy">Copy Link</el-button>
             </div>
         </div>
 
@@ -103,17 +103,17 @@
                 loading: false,
                 workerBaseUrl: '',
                 form: {
-    sourceSubUrl: '',
-    remoteConfig: '',
-    expand: 'false'   // 默认不展开
-},
+                    sourceSubUrl: '',
+                    remoteConfig: '',
+                    expand: 'false'   // default: do not expand
+                },
                 generatedUrl: '',
                 defaultConfig: 'https://raw.githubusercontent.com/EternalExp/ACL4SSR/DIY/ACL4SSR_DIY.INI'
             },
             methods: {
                 async generateLink() {
                     if (!this.form.sourceSubUrl.trim()) {
-                        this.$message.warning('请输入订阅链接');
+                        this.$message.warning('Please enter the subscription link');
                         return;
                     }
 
@@ -128,15 +128,15 @@
                         const configValue = this.form.remoteConfig.trim() || this.defaultConfig;
                         url.searchParams.set('config', configValue);
 
-                        // 新增 expand 参数
+                        // add expand parameter
                         url.searchParams.set('expand', this.form.expand);
 
                         this.generatedUrl = url.toString();
-                        this.$message.success('订阅链接已生成');
+                        this.$message.success('Subscription link generated');
 
                     } catch (error) {
-                        console.error('生成链接时出错:', error);
-                        this.$message.error('生成链接失败: ' + (error.message || '未知错误'));
+                        console.error('Error generating link:', error);
+                        this.$message.error('Failed to generate link: ' + (error.message || 'Unknown error'));
                     } finally {
                         this.loading = false;
                     }
@@ -144,10 +144,10 @@
                 copyToClipboard(text) {
                     if (!text) return;
                     navigator.clipboard.writeText(text).then(() => {
-                        this.$message.success('链接已复制到剪贴板');
+                        this.$message.success('Link copied to clipboard');
                     }).catch(err => {
-                        console.error('复制失败:', err);
-                        this.$message.error('复制失败');
+                        console.error('Copy failed:', err);
+                        this.$message.error('Copy failed');
                     });
                 }
             },
