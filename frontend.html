@@ -49,6 +49,16 @@
         .copy-btn {
             margin-top: 10px;
         }
+        .flex-row {
+            display: flex;
+            align-items: center;
+        }
+        .radio-group-spacing .el-radio-button {
+            margin-right: 8px;
+        }
+        .radio-group-spacing .el-radio-group + .el-radio-group {
+            margin-left: 16px;
+        }
     </style>
 </head>
 <body>
@@ -72,15 +82,18 @@
             </el-input>
         </div>
 
-<div class="form-section">
-    <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
-        <span>3. Expand Rules</span>
-        <el-radio-group v-model="form.expand" size="small">
-            <el-radio-button label="false" style="color:#409EFF;">Do Not Expand</el-radio-button>
-            <el-radio-button label="true" style="color:#409EFF;">Expand</el-radio-button>
-        </el-radio-group>
-    </div>
-</div>
+        <div class="form-section">
+            <div class="section-title flex-row radio-group-spacing">
+                <el-radio-group v-model="form.expand" size="small">
+                    <el-radio-button label="false" style="color:#409EFF;">Do Not Expand</el-radio-button>
+                    <el-radio-button label="true" style="color:#409EFF;">Expand</el-radio-button>
+                </el-radio-group>
+                <el-radio-group v-model="form.configType" size="small">
+                    <el-radio-button label="edu" style="color:#409EFF;">Edu</el-radio-button>
+                    <el-radio-button label="home" style="color:#409EFF;">Home</el-radio-button>
+                </el-radio-group>
+            </div>
+        </div>
 
         <el-button type="primary" class="generate-btn" @click="generateLink" :loading="loading">Generate Subscription Link</el-button>
 
@@ -105,10 +118,14 @@
                 form: {
                     sourceSubUrl: '',
                     remoteConfig: '',
-                    expand: 'false'   // default: do not expand
+                    expand: 'false',
+                    configType: 'edu'
                 },
                 generatedUrl: '',
-                defaultConfig: 'https://raw.githubusercontent.com/EternalExp/ACL4SSR/DIY/ACL4SSR_DIY.INI'
+                configUrls: {
+                    edu: 'https://raw.githubusercontent.com/EternalExp/rules/main/rules_edu.INI',
+                    home: 'https://raw.githubusercontent.com/EternalExp/rules/main/rules_home.INI'
+                }
             },
             methods: {
                 async generateLink() {
@@ -124,16 +141,10 @@
                         let url = new URL('/sub', window.location.origin);
                         url.searchParams.set('target', 'clash');
                         url.searchParams.set('url', this.form.sourceSubUrl);
-
-                        const configValue = this.form.remoteConfig.trim() || this.defaultConfig;
-                        url.searchParams.set('config', configValue);
-
-                        // add expand parameter
+                        url.searchParams.set('config', this.configUrls[this.form.configType]);
                         url.searchParams.set('expand', this.form.expand);
-
                         this.generatedUrl = url.toString();
                         this.$message.success('Subscription link generated');
-
                     } catch (error) {
                         console.error('Error generating link:', error);
                         this.$message.error('Failed to generate link: ' + (error.message || 'Unknown error'));
