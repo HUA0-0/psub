@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscription Converter</title>
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css ">
     <style>
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -29,6 +29,15 @@
             padding-bottom: 10px;
             border-bottom: 1px solid #ebeef5;
             color: #409EFF;
+            text-align: center;
+            font-size: 24px;
+        }
+        .section-title-spacer {
+             border-bottom: 1px solid #ebeef5;
+             margin-bottom: 15px;
+             padding-bottom: 10px;
+             height: 1px;
+             opacity: 0;
         }
         .el-input, .el-textarea {
             width: 100%;
@@ -49,9 +58,12 @@
         .copy-btn {
             margin-top: 10px;
         }
-        .flex-row {
+        .radio-groups-container {
             display: flex;
+            justify-content: center;
             align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
         }
         .radio-group-spacing .el-radio-button {
             margin-right: 8px;
@@ -66,7 +78,7 @@
         <h1 style="text-align: center; margin-bottom: 30px;">Subscription Converter</h1>
 
         <div class="form-section">
-            <div class="section-title">1. Subscription Link</div>
+            <div class="section-title">Subscription Link</div>
             <el-input
                 placeholder="Enter your original subscription link"
                 v-model="form.sourceSubUrl">
@@ -74,16 +86,8 @@
         </div>
 
         <div class="form-section">
-            <div class="section-title">2. Remote Config</div>
-            <el-input
-                placeholder="Enter the URL of the remote config file"
-                v-model="form.remoteConfig"
-                clearable>
-            </el-input>
-        </div>
-
-        <div class="form-section">
-            <div class="section-title flex-row radio-group-spacing">
+            <div class="section-title section-title-spacer"></div>
+            <div class="radio-groups-container">
                 <el-radio-group v-model="form.expand" size="small">
                     <el-radio-button label="false" style="color:#409EFF;">Do Not Expand</el-radio-button>
                     <el-radio-button label="true" style="color:#409EFF;">Expand</el-radio-button>
@@ -107,8 +111,8 @@
 
     </div>
 
-    <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
-    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/vue@2/dist/vue.js "></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js "></script>
     <script>
         new Vue({
             el: '#app',
@@ -117,14 +121,13 @@
                 workerBaseUrl: '',
                 form: {
                     sourceSubUrl: '',
-                    remoteConfig: '',
                     expand: 'false',
                     configType: 'edu'
                 },
                 generatedUrl: '',
                 configUrls: {
-                    edu: 'https://raw.githubusercontent.com/HUA0-0/rules/main/rules_edu.INI',
-                    home: 'https://raw.githubusercontent.com/HUA0-0/rules/main/rules_home.INI'
+                    edu: 'https://raw.githubusercontent.com/HUA0-0/rules/main/rules_edu.INI ',
+                    home: 'https://raw.githubusercontent.com/HUA0-0/rules/main/rules_home.INI '
                 }
             },
             methods: {
@@ -138,11 +141,12 @@
                     this.generatedUrl = '';
 
                     try {
-                        let url = new URL('/sub', window.location.origin);
+                        let url = new 网站('/sub', window.location.origin);
                         url.searchParams.set('target', 'clash');
                         url.searchParams.set('url', this.form.sourceSubUrl);
                         url.searchParams.set('config', this.configUrls[this.form.configType]);
                         url.searchParams.set('expand', this.form.expand);
+                        url.searchParams.set('emoji', 'true');
                         this.generatedUrl = url.toString();
                         this.$message.success('Subscription link generated');
                     } catch (error) {
@@ -169,4 +173,3 @@
     </script>
 </body>
 </html>
-
