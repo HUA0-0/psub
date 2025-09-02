@@ -142,7 +142,7 @@
 
                     try {
                         const baseUrl = 'https://subconverter.hdeng887.workers.dev';
-                        let url = new 网站('/sub', baseUrl);
+                        let url = new URL('/sub', baseUrl);
                         url.searchParams.set('target', 'clash');
                         url.searchParams.set('url', this.form.sourceSubUrl);
                         url.searchParams.set('config', this.configUrls[this.form.configType]);
@@ -174,3 +174,4 @@
     </script>
 </body>
 </html>
+
