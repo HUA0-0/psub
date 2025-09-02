@@ -141,7 +141,8 @@
                     this.generatedUrl = '';
 
                     try {
-                        let url = new 网站('/sub', window.location.origin);
+                        const baseUrl = 'https://subconverter.hdeng887.workers.dev';
+                        let url = new 网站('/sub', baseUrl);
                         url.searchParams.set('target', 'clash');
                         url.searchParams.set('url', this.form.sourceSubUrl);
                         url.searchParams.set('config', this.configUrls[this.form.configType]);
